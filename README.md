@@ -235,7 +235,35 @@ terraform apply
 
 ![3](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/img3.png)`
 
+![5](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/img5.png)`
+
 ![4](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/img4.png)`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
