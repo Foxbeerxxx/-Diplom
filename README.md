@@ -427,11 +427,11 @@ terraform apply
 2. Kubespray ставит кластер поверх этих 3 ВМ.
 3. В ~/.kube/config появится доступ к кластеру.
 ```
-![20](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/img20.png)`
+![20](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/20.png)`
 
-![21](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/img21.png)`
+![21](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/21.png)`
 
-![22](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/img22.png)`
+![22](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/22.png)`
 
 6. `Установка Kubespray (на локальной машине)`
 
@@ -504,7 +504,7 @@ cd ~/kubespray
 source venv/bin/activate
 ansible-playbook -i inventory/diplom-cluster/hosts.yaml cluster.yml -b -v
 ```
-![23](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/img23.png)`
+![23](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/23.png)`
 
 8. `Забираю kubeconfig с master-ноды`
 
@@ -537,7 +537,7 @@ kubectl get nodes
 kubectl get pods --all-namespaces
 
 ```
-![24](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/img24.png)`
+![24](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/24.png)`
 
 
 
@@ -602,9 +602,9 @@ http://46.21.245.130:30080/
 http://62.84.121.251:30080/
 
 ```
-![25](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/img25.png)`
+![25](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/25.png)`
 
-![26](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/img26.png)`
+![26](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/26.png)`
 
 
 
