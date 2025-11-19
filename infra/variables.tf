@@ -7,3 +7,11 @@ variable "folder_id" {
   type    = string
   default = "b1gse67sen06i8u6ri78"
 }
+
+variable "ssh_public_key" {
+  description = "SSH public key for user ubuntu"
+  type        = string
+}
+
+
+
