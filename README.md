@@ -499,28 +499,114 @@ all:
 
 7. `Запускаю Kubespray`
 
-
 ```
 cd ~/kubespray
 source venv/bin/activate
 ansible-playbook -i inventory/diplom-cluster/hosts.yaml cluster.yml -b -v
 ```
+![23](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/img23.png)`
 
-
-8. ``
-9. ``
-10. ``
+8. `Забираю kubeconfig с master-ноды`
 
 ```
-Поле для вставки кода...
-....
-....
-....
-....
+На локальной машине где запускал Ansible, выполняю:
+
+mkdir -p ~/.kube
+ssh ubuntu@51.250.86.201 'sudo cat /etc/kubernetes/admin.conf' > ~/.kube/config  # 51.250.86.201 Ip master-ноды
+chmod 600 ~/.kube/config
 ```
 
-`При необходимости прикрепитe сюда скриншоты
-![Название скриншота 2](ссылка на скриншот 2)`
+9. `Проверяю кластер прямо на мастер-ноде`ъ
+
+```
+1. Подключись к мастеру:
+ssh ubuntu@51.250.86.201
+
+2. Переключаюсь в root:
+sudo -i
+
+3. Проверяю, что там есть kubeconfig и перекидываю его в ~/.kube/config:
+
+mkdir -p /root/.kube
+cp /etc/kubernetes/admin.conf /root/.kube/config
+chmod 600 /root/.kube/config
+
+4. Затем 
+
+kubectl get nodes
+kubectl get pods --all-namespaces
+
+```
+![24](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/img24.png)`
+
+
+
+10. `Добиваею формулировку «обеспечить доступ к ресурсам из интернета» — сделаю простой nginx через NodePort.`
+
+```
+Манифест nginx + NodePort на мастер ноде
+
+cd /root
+nano nginx-nodeport.yaml
+
+# Добавляю 
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-nginx
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: web-nginx
+  template:
+    metadata:
+      labels:
+        app: web-nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:stable
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-nginx
+spec:
+  type: NodePort
+  selector:
+    app: web-nginx
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30080
+
+```
+12. `Применяю`
+
+```
+kubectl apply -f nginx-nodeport.yaml
+
+kubectl get deploy web-nginx
+kubectl get svc web-nginx
+kubectl get pods -l app=web-nginx -o wide
+
+Открываю в браузере (с любого компьютера с интернетом):
+http://51.250.86.201:30080/
+
+http://46.21.245.130:30080/
+http://62.84.121.251:30080/
+
+```
+![25](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/img25.png)`
+
+![26](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/img26.png)`
+
+
 
 
 ---
