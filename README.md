@@ -611,27 +611,173 @@ http://62.84.121.251:30080/
 
 ---
 
-### Задание 3
+### Создание тестового приложения
 
-`Приведите ответ в свободной форме........`
 
-1. `Заполните здесь этапы выполнения, если требуется ....`
-2. `Заполните здесь этапы выполнения, если требуется ....`
-3. `Заполните здесь этапы выполнения, если требуется ....`
-4. `Заполните здесь этапы выполнения, если требуется ....`
-5. `Заполните здесь этапы выполнения, если требуется ....`
-6. 
+1. `По заданию создаю пустой рипозиторй для своего приложения`
 
 ```
-Поле для вставки кода...
-....
-....
-....
-....
+https://github.com/Foxbeerxxx/test-application
+
+Колнирую его на локальную машину и пишу наполнение
+
+test-application/
+ ─ nginx.conf
+ ─ index.html
+ ─ Dockerfile
+ ─ README.md
+```
+2. `nginx.conf`
+```
+events {}
+
+http {
+    server {
+        listen 80;
+        server_name _;
+
+        # Корневая директория со статикой
+        root /usr/share/nginx/html;
+        index index.html;
+
+        # Простая health-страница
+        location /healthz {
+            return 200 'OK';
+            add_header Content-Type text/plain;
+        }
+
+        # Отдача статики
+        location / {
+            try_files $uri /index.html;
+        }
+    }
+}
+
+```
+3. `index.html`
+```
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Application</title>
+</head>
+<body>
+    <h1>Test Application для диплома в Yandex Cloud</h1>
+    <p>Это статическое приложение на базе Nginx, используемое для проверки деплоя в Kubernetes.</p>
+    <p>Версия: v1</p>
+</body>
+</html>
+
 ```
 
-`При необходимости прикрепитe сюда скриншоты
-![Название скриншота](ссылка на скриншот)`
+4. `Файл Dockerfile`
+
+```
+# Базовый образ с Nginx
+FROM nginx:stable-alpine
+
+# Удаляем дефолтный конфиг и кладём свой
+RUN rm /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Кладём статический контент
+COPY index.html /usr/share/nginx/html/index.html
+
+# HTTP-порт
+EXPOSE 80
+
+# Стандартная команда запуска Nginx
+CMD ["nginx", "-g", "daemon off;"]
+
+```
+5. `README.md`
+
+```
+# Test Application
+
+Тестовое приложение для дипломного практикума в Yandex Cloud.
+
+Приложение:
+- использует Nginx
+- отдаёт статическую страницу `index.html`
+- имеет health-endpoint `/healthz`
+
+## Сборка Docker-образа
+
+docker build -t test-application:local .
+
+
+После создания файлов — коммит и пушь:
+
+bash
+git add .
+git commit -m "Add nginx-based test application and Dockerfile"
+git push origin main
+
+```
+6. `В каталоге ~/dz/-Diplom/infra добавляю новый файл, например registry.tf:`
+
+```
+resource "yandex_container_registry" "test_registry" {
+  name      = "diplom-test-registry"
+  folder_id = var.folder_id
+}
+
+```
+7. `Также каталоге ~/dz/-Diplom/infra в main.tf дописываю`
+
+```
+output "container_registry_id" {
+  description = "ID Yandex Container Registry для образов приложения"
+  value       = yandex_container_registry.test_registry.id
+}
+
+```
+
+8. `Далее:`
+
+```
+cd ~/dz/-Diplom/infra
+
+terraform init -reconfigure
+terraform apply
+
+```
+![30](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/30.png)
+
+9. `Логин в Yandex Container Registry`
+
+```
+Доступ есть , но можно перестраховаться
+yc container registry configure-docker
+
+```
+10. `Сборка Docker-образа локально`
+
+```
+cd ~/dz/test-application   #  путь, куда я клонировал репозиторий от приложения
+docker build -t test-application:v1 .
+
+```
+![31](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/31.png)
+
+11. `Тэгирование образа под YCR`
+
+```
+docker tag test-application:v1 cr.yandex/crpi9836t83pfjfb81dp/test-application:v1
+```
+12. `Отправляю в YCR`
+
+```
+docker push cr.yandex/crpi9836t83pfjfb81dp/test-application:v1
+
+```
+![32](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/32.png)
+
+![33](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/33.png)
+
+
 
 ### Задание 4
 

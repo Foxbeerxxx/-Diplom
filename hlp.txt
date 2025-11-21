@@ -10,3 +10,7 @@ cd ~/dz/-Diplom/infra
 
 terraform init -reconfigure
 terraform destroy
+terraform apply
+
+
+export REGISTRY_ID=$(terraform output -raw container_registry_id)

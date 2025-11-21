@@ -105,3 +105,8 @@ output "k8s_nodes_public_ips" {
 output "k8s_master_public_ip" {
   value = yandex_compute_instance.k8s["k8s-master-1"].network_interface[0].nat_ip_address
 }
+
+output "container_registry_id" {
+  description = "ID Yandex Container Registry для образов приложения"
+  value       = yandex_container_registry.test_registry.id
+}
