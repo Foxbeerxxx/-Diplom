@@ -906,7 +906,7 @@ kubectl -n monitoring patch svc grafana -p '{
 Проверить:
 kubectl -n monitoring get svc grafana
 ```
-![43](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/43.png
+![43](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/43.png)
 
 5. `Сделаю доступным Prometheus`
 
@@ -934,7 +934,7 @@ http://158.160.38.221:30900
 
 
 ```
-![42](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/42.png
+![42](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/42.png)
 
 6. ` `
 7. ` `
