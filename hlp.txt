@@ -13,4 +13,55 @@ terraform destroy
 terraform apply
 
 
+
 export REGISTRY_ID=$(terraform output -raw container_registry_id)
+
+terraform apply -var "ssh_public_key=$(cat ~/.ssh/id_ed25519.pub)"
+
+
+
+
+
+
+
+
+
+Обновляем inventory Kubespray
+На локальной машине:
+cd ~/kubespray
+nano inventory/diplom-cluster/hosts.yaml
+Прописываю актульные ip
+
+
+
+ # задеплоить кластер Kubespray
+cd ~/kubespray
+source venv/bin/activate
+ansible-playbook -i inventory/diplom-cluster/hosts.yaml cluster.yml -b -v
+
+Разворачиваю
+
+копирую на мастер ноду
+
+
+
+На Мастере:
+
+sudo -i
+mkdir -p /root/.kube
+cp /etc/kubernetes/admin.conf /root/.kube/config
+chmod 600 /root/.kube/config
+
+
+На master:
+
+ssh ubuntu@<public-ip-master>
+sudo -i
+cp /etc/kubernetes/admin.conf ~/.kube/config
+kubectl get nodes
+
+
+
+проброс сессии ssh -L 6443:127.0.0.1:6443 ubuntu@158.160.36.198
+kubectl -n monitoring port-forward svc/grafana 3000:3000
+http://localhost:3000/

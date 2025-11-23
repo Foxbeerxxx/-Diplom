@@ -779,16 +779,169 @@ docker push cr.yandex/crpi9836t83pfjfb81dp/test-application:v1
 
 
 
-### Задание 4
+### Подготовка cистемы мониторинга и деплой приложения
 
-`Приведите ответ в свободной форме........`
 
-1. `Заполните здесь этапы выполнения, если требуется ....`
-2. `Заполните здесь этапы выполнения, если требуется ....`
-3. `Заполните здесь этапы выполнения, если требуется ....`
-4. `Заполните здесь этапы выполнения, если требуется ....`
-5. `Заполните здесь этапы выполнения, если требуется ....`
-6. 
+1. `Захожу на master в YC`
+```
+ssh ubuntu@89.169.137.143
+sudo -i
+mkdir -p /root/.kube
+cp /etc/kubernetes/admin.conf ~/.kube/config
+chmod 600 ~/.kube/config
+kubectl get nodes
+```
+
+2. `Скачиваю kube-prometheus`
+```
+cd ~
+git clone https://github.com/prometheus-operator/kube-prometheus.git
+cd kube-prometheus
+
+Команды строго по документации kube-prometheus:
+# Шаг 1 — CRD и namespace monitoring
+kubectl apply -f manifests/setup/
+
+# Подождать, пока CRD будут созданы
+kubectl wait \
+  --for=condition=Established \
+  --all CustomResourceDefinition
+
+Применить остальные манифесты стека
+
+kubectl apply -f manifests/
+
+Это поставит:
+-Prometheus Operator
+-Prometheus
+-Alertmanager
+-Grafana
+-kube-state-metrics
+-node-exporter
+и остальные необходимые компоненты.
+
+Проверка:
+kubectl get pods -n monitoring
+```
+![40](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/40.png)
+
+
+3. `Деплой тестового приложения (nginx из моего образа в YCR)`
+```
+Создаю файл /root/test-application.yaml на master:
+
+cat > /root/test-application.yaml << 'EOF'
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-application
+  labels:
+    app: test-application
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: test-application
+  template:
+    metadata:
+      labels:
+        app: test-application
+    spec:
+      containers:
+      - name: test-application
+        image: cr.yandex/crpi9836t83pfjfb81dp/test-application:v1
+        ports:
+        - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: test-application
+spec:
+  type: NodePort
+  selector:
+    app: test-application
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+    nodePort: 30080
+EOF
+
+
+Применяю: 
+kubectl apply -f /root/test-application.yaml
+kubectl get pods -o wide
+kubectl get svc
+
+Проверка в браузере (любая нода):
+http://158.160.36.198:30080/
+http://158.160.38.221:30080/
+http://89.169.176.178:30080/
+
+```
+![41](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/41.png)
+
+4. `Сделаю Grafana доступной снаружи`
+
+```
+На master-ноде:
+
+kubectl -n monitoring patch svc grafana -p '{
+  "spec": {
+    "type": "NodePort",
+    "ports": [
+      {
+        "name": "http",
+        "port": 3000,
+        "targetPort": 3000,
+        "nodePort": 30300
+      }
+    ]
+  }
+}'
+
+
+Проверить:
+kubectl -n monitoring get svc grafana
+```
+![43](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/43.png
+
+5. `Сделаю доступным Prometheus`
+
+```
+kubectl -n monitoring patch svc prometheus-k8s -p '{
+  "spec": {
+    "type": "NodePort",
+    "ports": [
+      {
+        "name": "web",
+        "port": 9090,
+        "targetPort": 9090,
+        "nodePort": 30900
+      }
+    ]
+  }
+}'
+
+Проверка:
+kubectl -n monitoring get svc prometheus-k8s
+
+из браузера:
+http://158.160.38.221:30900
+или http://89.169.176.178:30900
+
+
+```
+![42](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/42.png
+
+6. ` `
+7. ` `
+8. ` `
+9. ` `
+10. ` `
+6. ` `
 
 ```
 Поле для вставки кода...
