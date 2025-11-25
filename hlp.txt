@@ -62,10 +62,41 @@ kubectl get nodes
 ssh ubuntu@<public-ip-master>
 sudo -i
 cp /etc/kubernetes/admin.conf ~/.kube/config
+
+
+
+# посмотреть внутренние IP нод
+kubectl get nodes -o wide
+
+
+///////////////////////////////////////////////
+На мастере: подготовить kubeconfig
+ssh ubuntu@<master_public_ip>
+sudo -i
+
+# копируем актуальный admin.conf в домашний каталог ubuntu
+cp /etc/kubernetes/admin.conf /home/ubuntu/diplom-kubeconfig.yaml
+chown ubuntu:ubuntu /home/ubuntu/diplom-kubeconfig.yaml
+exit
+
+Скопировать на локальную машину
+На своей локальной машине:
+scp ubuntu@<master_public_ip>:/home/ubuntu/diplom-kubeconfig.yaml ~/.kube/diplom-kubeconfig.yaml
+chmod 600 ~/.kube/diplom-kubeconfig.yaml
+
+ssh -L 6443:127.0.0.1:6443 ubuntu@84.252.128.124 # Проброс сессии на локальном пк
+
+Теперь в другом локальном терминале:
+Проверка API
+
+export KUBECONFIG=$HOME/.kube/diplom-kubeconfig.yaml
 kubectl get nodes
+kubectl get pods -A
 
 
 
-Проброс сессии ssh -L 6443:127.0.0.1:6443 ubuntu@158.160.36.198
-kubectl -n monitoring port-forward svc/grafana 3000:3000
-http://localhost:3000/
+
+
+    
+# kubectl -n monitoring port-forward svc/grafana 3000:3000
+# http://localhost:3000/

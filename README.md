@@ -881,7 +881,7 @@ kubectl get pods -o wide
 kubectl get svc
 
 Проверка в браузере (любая нода):
-http://158.160.36.198:30080/
+http://84.252.128.124:30080/
 http://158.160.38.221:30080/
 http://89.169.176.178:30080/
 
@@ -940,6 +940,8 @@ http://158.160.38.221:30900
 
 ```
 ![42](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/42.png)
+
+![45](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/45.png)
 
 6. ` `
 7. ` `
