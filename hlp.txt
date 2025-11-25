@@ -39,7 +39,7 @@ cd ~/kubespray
 source venv/bin/activate
 ansible-playbook -i inventory/diplom-cluster/hosts.yaml cluster.yml -b -v
 
-1 Разворачиваю
+Разворачиваю
 
 копирую на мастер ноду
 
