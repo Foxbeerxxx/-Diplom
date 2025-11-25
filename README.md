@@ -794,6 +794,11 @@ kubectl get nodes
 
 2. `Скачиваю kube-prometheus`
 ```
+sudo -i
+
+apt update
+apt install -y git curl
+
 cd ~
 git clone https://github.com/prometheus-operator/kube-prometheus.git
 cd kube-prometheus

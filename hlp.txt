@@ -53,6 +53,10 @@ cp /etc/kubernetes/admin.conf /root/.kube/config
 chmod 600 /root/.kube/config
 
 
+kubectl get nodes
+
+
+
 На master:
 
 ssh ubuntu@<public-ip-master>
