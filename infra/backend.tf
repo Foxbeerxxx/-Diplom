@@ -1,7 +1,8 @@
 terraform {
   backend "s3" {
     bucket                      = "tf-state-atata"
-    key                         = "state/terraform.tfstate"
+    # key                         = "state/terraform.tfstate"
+    key    = "infra/terraform.tfstate"
     region                      = "us-east-1"
 
     endpoint                    = "https://storage.yandexcloud.net"
