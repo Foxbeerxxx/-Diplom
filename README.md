@@ -943,8 +943,17 @@ http://158.160.38.221:30900
 
 ![45](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/45.png)
 
-6. ` `
-7. ` `
+
+6. `Добавляю порты в группу безопастности `
+
+```
+TCP	30000-32767	CIDR	0.0.0.0/0 app_grafana_prometeus
+Any	10250	CIDR	0.0.0.0/0
+```
+
+
+
+
 8. ` `
 9. ` `
 10. ` `

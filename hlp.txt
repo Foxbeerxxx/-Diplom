@@ -94,9 +94,18 @@ kubectl get nodes
 kubectl get pods -A
 
 
+Доступ к Grafana
+С локальной машины, в отдельном терминале (SSH туннель на 6443 всё ещё висит):
+
+export KUBECONFIG=$HOME/.kube/diplom-kubeconfig.yaml
+kubectl -n monitoring port-forward svc/grafana 3000:3000
+http://localhost:3000
 
 
+Доступ к ПРОМЕТЕУС
 
-    
-# kubectl -n monitoring port-forward svc/grafana 3000:3000
-# http://localhost:3000/
+export KUBECONFIG=$HOME/.kube/diplom-kubeconfig.yaml
+kubectl -n monitoring port-forward svc/prometheus-k8s 9090:9090
+http://localhost:9090
+
+
