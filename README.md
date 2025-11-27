@@ -952,14 +952,114 @@ Any	10250	CIDR	0.0.0.0/0
 ```
 
 
+### Деплой инфраструктуры в terraform pipeline
+
+ `Сначало попробовал на основном репозитории Diplom, затем по заданию создал   https://github.com/Foxbeerxxx/ter_in_githubAction  `
+1. ` Для работы Terraform в GitHub Actions мне нужно настроить секреты`
+
+```
+YC_TOKEN — OAuth-токен/iam-token для провайдера yandex.
+YC_OBJ_ACCESS_KEY и YC_OBJ_SECRET_KEY — статический ключ Object Storage (из bootstrap/output):
+sa_access_key → YC_OBJ_ACCESS_KEY
+sa_secret_key → YC_OBJ_SECRET_KEY
+SSH_PUBLIC_KEY —  мой твой публичный ключ  #cat ~/.ssh/id_ed25519.pub
+
+В репозитории:
+Открыть: Settings → Secrets and variables → Actions → New repository secret.
+
+```
+2. ` Создаю GitHub Actions workflow`
+
+В корне репозитория -Diplom создаю файл:
+.github/workflows/terraform-ci.yml
+
+```
+name: Terraform CI/CD
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+
+env:
+  TF_IN_AUTOMATION: "true"
+  YC_CLOUD_ID: "b1gvjpk4qbrvling8qq1"
+  YC_FOLDER_ID: "b1gse67sen06i8u6ri78"
+  YC_TOKEN: ${{ secrets.YC_TOKEN }}
+
+jobs:
+  terraform:
+    name: Terraform
+    runs-on: ubuntu-latest
+
+    # тут настраиваем доступ к Object Storage (S3 backend)
+    env:
+      AWS_ACCESS_KEY_ID:     ${{ secrets.YC_OBJ_ACCESS_KEY }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.YC_OBJ_SECRET_KEY }}
+      AWS_DEFAULT_REGION:    "ru-central1"
+      TF_VAR_ssh_public_key: ${{ secrets.SSH_PUBLIC_KEY }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.7
+
+      - name: Terraform Init
+        working-directory: infra
+        run: terraform init -input=false
+
+      - name: Terraform Plan
+        working-directory: infra
+        run: terraform plan -input=false
+
+      - name: Terraform Apply (only on main)
+        if: github.ref == 'refs/heads/main'
+        working-directory: infra
+        run: terraform apply -auto-approve -input=false
+
+```
+
+3. ` Также сыпались ошибки по infra/backend.tf  поэтому пришлось немного изменить`
+
+```
+terraform {
+  backend "s3" {
+    bucket                      = "tf-state-atata"
+    # key                         = "state/terraform.tfstate"
+    key    = "infra/terraform.tfstate"
+    region                      = "us-east-1"
+
+    endpoint                    = "https://storage.yandexcloud.net"
+
+    skip_region_validation      = true
+    skip_credentials_validation = true
+    skip_metadata_api_check     = true
+
+    force_path_style            = true
+  }
+}
+
+```
+
+4. `Делаю commit & push`
+
+![47](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/47.png)
+
+![48](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/48.png)
 
 
-8. ` `
-9. ` `
-10. ` `
 
 
+
+`
+
+5. ` `
 6. ` `
+7. ` `
 
 ```
 Поле для вставки кода...
