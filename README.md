@@ -1047,6 +1047,13 @@ terraform {
 
 4. `Делаю commit & push`
 
+```
+Траблшутинг проводил в основном репозитории : https://github.com/Foxbeerxxx/-Diplom
+
+После определения всех проблем и исправление ошибок, вывел в новый репозиторий.
+https://github.com/Foxbeerxxx/ter_in_githubAction
+
+```
 ![47](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/47.png)
 
 ![48](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/48.png)
