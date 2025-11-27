@@ -944,7 +944,14 @@ http://158.160.38.221:30900
 ![45](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/45.png)
 
 
-6. `Добавляю порты в группу безопастности `
+6. `Все метрики собирает`
+![49](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/49.png)
+
+![50](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/50.png)
+
+![51](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/51.png)
+
+. `Добавляю порты в группу безопастности `
 
 ```
 TCP	30000-32767	CIDR	0.0.0.0/0 app_grafana_prometeus
