@@ -11,8 +11,8 @@ terraform output -raw sa_secret_key
 
 Экспортируем их для backend:
 
-export AWS_ACCESS_KEY_ID="YCAJEJyfbkPO6jLY6Y6Ma6iQn"
-export AWS_SECRET_ACCESS_KEY="YCOePKSLt3Zi77yv_k5NJ2scs2upfuCCA_kLNl5J"
+export AWS_ACCESS_KEY_ID="***"
+export AWS_SECRET_ACCESS_KEY="***"
 export AWS_DEFAULT_REGION="ru-central1"
 
 
