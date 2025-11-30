@@ -1,5 +1,5 @@
 Заметка
-token: y0__xCT0ufIBxjB3RMggtW4jxOA51ZsI3f2sKmFlatvU579i7Vgfw
+token: y0__xCT0ufIBxjB3RMggtW4jxOA51ZVgfw
 cloud-id: b1gvjpk4qbrvling8qq1
 folder-id: b1gse67sen06i8u6ri78
 compute-default-zone: ru-central1-a
