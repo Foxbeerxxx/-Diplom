@@ -461,15 +461,15 @@ all:
   hosts:
     k8s-master-1:
       ansible_host: 51.250.86.201
-      ip: 10.20.10.9          # ← как в ошибке
+      ip: 10.20.10.9         
       access_ip: 51.250.86.201
     k8s-worker-1:
       ansible_host: 46.21.245.130
-      ip: 10.20.10.14         # ← как в ошибке
+      ip: 10.20.10.14         
       access_ip: 46.21.245.130
     k8s-worker-2:
       ansible_host: 62.84.121.251
-      ip: 10.20.20.13         # ← как в ошибке
+      ip: 10.20.20.13         
       access_ip: 62.84.121.251
 
   vars:
