@@ -944,14 +944,14 @@ http://158.160.38.221:30900
 ![45](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/45.png)
 
 
-6. `Все метрики собирает`
+6. ` Grafana все метрики собирает`
 ![49](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/49.png)
 
 ![50](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/50.png)
 
 ![51](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/51.png)
 
-. `Добавляю порты в группу безопастности `
+7. `Добавляю порты в группу безопастности в ЯОблаке`
 
 ```
 TCP	30000-32767	CIDR	0.0.0.0/0 app_grafana_prometeus
@@ -1067,21 +1067,137 @@ https://github.com/Foxbeerxxx/ter_in_githubAction
 
 
 
+### Установка и настройка CI/CD
+
+1. ` Беру репозиторий с приложением https://github.com/Foxbeerxxx/test-application_v2   для работы с GitHub Action`
 
 
-`
-
-5. ` `
-6. ` `
-7. ` `
+2. ` Записываю секреты в GitHub (Settings → Secrets and variables → Actions)`
 
 ```
-Поле для вставки кода...
-....
-....
-....
-....
+1. YC_REGISTRY_TOKEN  # Outh-токен
+2. YC_REGISTRY_ID  # у меня crpi9836t83pfjfb81dp
+3. K8S_MASTER_IP   # у меня 84.252.128.124
+4. K8S_SSH_KEY  # (~/.ssh/id_ed25519)  
+
+```
+![61](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/61.png)
+
+
+3. `Файл workflow для CI/CD `
+
+```
+#   в корень создаю .github/workflows/cicd.yml
+
+name: CI/CD test-application
+
+on:
+  push:
+    branches:
+      - "main"
+    tags:
+      - "v*.*.*"
+
+env:
+  REGISTRY: cr.yandex
+  REGISTRY_ID: ${{ secrets.YC_REGISTRY_ID }}
+  IMAGE_NAME: test-application
+
+jobs:
+  # -------------------------------
+  # BUILD & PUSH
+  # -------------------------------
+  build-and-push:
+    name: Build and push image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set image tag
+        run: |
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            echo "TAG=${GITHUB_REF_NAME}" >> "$GITHUB_ENV"
+          else
+            echo "TAG=latest" >> "$GITHUB_ENV"
+          fi
+
+      - name: Login to Yandex Container Registry
+        env:
+          YC_TOKEN: ${{ secrets.YC_TOKEN }}
+        run: |
+          echo "$YC_TOKEN" | docker login "$REGISTRY" -u oauth --password-stdin
+
+      - name: Build and push image
+        run: |
+          IMAGE="$REGISTRY/$REGISTRY_ID/$IMAGE_NAME:$TAG"
+          echo "Building image: $IMAGE"
+          docker build -t "$IMAGE" .
+          docker push "$IMAGE"
+
+
+  # -------------------------------
+  # DEPLOY
+  # -------------------------------
+  deploy:
+    name: Deploy to Kubernetes
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: startsWith(github.ref, 'refs/tags/')
+
+    steps:
+      - name: Add SSH key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy on k8s master over SSH
+        env:
+          K8S_MASTER_HOST: ${{ secrets.K8S_MASTER_HOST }}
+        run: |
+          IMAGE="$REGISTRY/$REGISTRY_ID/$IMAGE_NAME:${GITHUB_REF_NAME}"
+          echo "Deploying image: $IMAGE"
+
+          ssh -o StrictHostKeyChecking=no ubuntu@"$K8S_MASTER_HOST" \
+            "sudo -i bash -lc ' \
+               export KUBECONFIG=/root/.kube/config; \
+               kubectl -n default set image deployment/test-application \
+                 test-application=$IMAGE; \
+               kubectl -n default rollout status deployment/test-application -n default; \
+             '"
+
+
+
 ```
 
-`При необходимости прикрепитe сюда скриншоты
-![Название скриншота](ссылка на скриншот)`
+5. `Commit and Push после правка ошибок и все запускается `
+
+![62](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/62.png)
+
+![63](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/63.png)
+
+![64](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/64.png)
+
+
+
+6. `Пробую Тегировать и проверка`
+
+```
+git tag v5.0.1
+git push origin v5.0.1
+```
+![66](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/66.png)
+
+![65](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/65.png)
+
+![67](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/67.png)
+
+
+7. ` Перед теированием я поменял в приложении в файлике index.html - версию а именно:`
+
+![68](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/68.png)
+
+8. ` Проверяю, что задеплоилось именно то что нужно, для этого захожу на публичный адрес приложения`
+
+![69](https://github.com/Foxbeerxxx/-Diplom/blob/main/pic/69.png)
